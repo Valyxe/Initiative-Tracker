@@ -6,23 +6,15 @@ using System.Threading.Tasks;
 
 namespace Initiative_Tracker
 {
-    class InitiativeNode
+    class InitiativeNode : IComparable<InitiativeNode>
     {
         private String charName;
         private int initNum;
-        private InitiativeNode next;
 
-        public InitiativeNode(String name, int num, InitiativeNode prev)
+        public InitiativeNode(String name, int num)
         {
             charName = name;
             initNum = num;
-            next = null;
-            prev.setNext(this);
-        }
-
-        public void setNext(InitiativeNode node)
-        {
-            next = node;
         }
 
         public String getCharName()
@@ -35,9 +27,18 @@ namespace Initiative_Tracker
             return initNum;
         }
 
-        public InitiativeNode getNext()
-        {
-            return next;
-        }
+		public String ToString()
+		{
+			return "" + charName + ": " + initNum + "\n";
+		}
+
+		public int CompareTo(InitiativeNode node)
+		{
+			if(node == null)
+			{
+				return 1;
+			}
+			return -1*initNum.CompareTo(node.getInit());
+		}
     }
 }

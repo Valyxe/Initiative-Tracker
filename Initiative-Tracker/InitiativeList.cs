@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace Initiative_Tracker
 {
-	class InitiativeList
+	class InitiativeList : System.Collections.Generic.List<InitiativeNode>
 	{
-		private InitiativeNode l_Head;
-
 		public InitiativeList()
 		{
-
 		}
 
-		public InitiativeList(InitiativeNode first)
+		public void Sort()
 		{
-			l_Head = first;
+
 		}
 	}
 }
