@@ -11,9 +11,7 @@ namespace Initiative_Tracker
 	{
 		static void Main(string[] args)
 		{
-			InitiativeForm init = new InitiativeForm();
-			init.ShowDialog();
-			init.Focus();
+			Application.Run(new InitiativeForm());
 		}
 	}
 }

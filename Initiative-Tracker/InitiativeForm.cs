@@ -13,8 +13,10 @@ namespace Initiative_Tracker
 		private TextBox charNameTxtBox;
 		private TextBox charInitTxtBox;
 		private Button addCharBtn;
-		private ListBox initNameListBox;
-		private ListBox initNumListBox;
+		private Button removeCharBtn;
+		private ListView initListView;
+		private ListViewItem initListViewNames;
+		private ListViewItem initListViewNums;
 		private List<InitiativeNode> initList;
 
 		//Initialize the form.
@@ -24,18 +26,18 @@ namespace Initiative_Tracker
 			charNameTxtBox = new TextBox();
 			charInitTxtBox = new TextBox();
 			addCharBtn = new Button();
-			initNameListBox = new ListBox();
-			initNumListBox = new ListBox();
+			removeCharBtn = new Button();
+			initListView = new ListView();
 			initList = new List<InitiativeNode>();
 
 			//Set form attributes.
 			this.MaximizeBox = false;
-			this.MinimizeBox = false;
+			this.MinimizeBox = true ;
 			this.BackColor = Color.LightGray;
 			this.ForeColor = Color.Black;
 			this.Size = new System.Drawing.Size(300, 300);
-			this.Text = "Pathfinder Initiative Tracker";
-			this.FormBorderStyle = FormBorderStyle.FixedDialog;
+			this.Text = "Initiative Tracker";
+			this.FormBorderStyle = FormBorderStyle.Fixed3D;
 			this.StartPosition = FormStartPosition.CenterScreen;
 
 			//Add text box for character name.
@@ -56,39 +58,94 @@ namespace Initiative_Tracker
 			addCharBtn.Click += new EventHandler(addButtonClick);
 			this.Controls.Add(addCharBtn);
 
-			//Add list box that shows character names.
-			initNameListBox.Sorted = false;
-			initNameListBox.Location = new System.Drawing.Point(10, 85);
-			initNameListBox.Size = new System.Drawing.Size(100, 100);
-			this.Controls.Add(initNameListBox);
+			//Add button that removes character from list.
+			removeCharBtn.BackColor = Color.DarkGray;
+			removeCharBtn.Text = "Del Character";
+			removeCharBtn.Location = new System.Drawing.Point(155, 55);
+			removeCharBtn.Size = new System.Drawing.Size(85, 20);
+			removeCharBtn.Click += new EventHandler(removeButtonClick);
+			this.Controls.Add(removeCharBtn);
 
-			//Add list box that shows character initiatives.
-			initNumListBox.Sorted = false;
-			initNumListBox.Location = new System.Drawing.Point(110, 85);
-			initNumListBox.Size = new System.Drawing.Size(100, 100);
-			this.Controls.Add(initNumListBox);
+			//Add list view that shows character names and initiatives.
+			initListView.GridLines = true;
+			initListView.Location = new System.Drawing.Point(10, 85);
+			initListView.Size = new System.Drawing.Size(200, 100);
+			this.Controls.Add(initListView);
+
+			//Give focus to name text box.
+			charNameTxtBox.Focus();
 		}
 
 		private void addButtonClick(object sender, System.EventArgs e)
 		{
+			if (charNameTxtBox.Text.Trim().Length == 0 || charInitTxtBox.Text.Trim().Length == 0)
+			{
+				//Give focus to name text box.
+				charNameTxtBox.Focus();
+				return;
+			}
 			String name = charNameTxtBox.Text;
 			int init = Convert.ToInt32(charInitTxtBox.Text);
 			InitiativeNode node = new InitiativeNode(name, init);
+			for (int i = 0; i < initList.Count; i++)
+			{
+				if (initList.ElementAt(i).getCharName().Equals(node.getCharName()))
+				{
+					Console.Write("Error on addButtonClick: Character already exists in list");
+					charNameTxtBox.Text = "";
+					charInitTxtBox.Text = "";
+
+					//Give focus to name text box.
+					charNameTxtBox.Focus();
+					return;
+				}
+			}
 			initList.Add(node);
 			initList.Sort();
 
-			initNameListBox.Items.Clear();
-			initNumListBox.Items.Clear();
+			repopulateListBox();
+			charNameTxtBox.Text = "";
+			charInitTxtBox.Text = "";
+
+			//Give focus to name text box.
+			charNameTxtBox.Focus();
+		}
+
+		private void removeButtonClick(object sender, System.EventArgs e)
+		{
+			if (charNameTxtBox.Text.Trim().Length == 0)
+			{
+				//Give focus to name text box.
+				charNameTxtBox.Focus();
+				return;
+			}
+			String name = charNameTxtBox.Text;
+			for (int i = 0; i < initList.Count; i++)
+			{
+				if (initList.ElementAt(i).getCharName().Equals(name))
+				{
+					initList.RemoveAt(i);
+					break;
+				}
+			}
+
+			repopulateListBox();
+			charNameTxtBox.Text = "";
+			charInitTxtBox.Text = "";
+
+			//Give focus to name text box.
+			charNameTxtBox.Focus();
+		}
+
+		private void repopulateListBox()
+		{
+			initListView.Items.Clear();
 			Console.Write("------------------\n");
 			for (int i = 0; i < initList.Count; i++)
 			{
-				initNameListBox.Items.Add(initList.ElementAt(i).getCharName());
-				initNumListBox.Items.Add(initList.ElementAt(i).getInit());
+				initListView.Items.Add(""+initList.ElementAt(i).getCharName()+"\t\t:\t"+initList.ElementAt(i).getInit());
 				Console.Write("{0}", initList.ElementAt(i).ToString());
 			}
-
-			charNameTxtBox.Text = "";
-			charInitTxtBox.Text = "";
 		}
 	}
 }

@@ -27,7 +27,7 @@ namespace Initiative_Tracker
             return initNum;
         }
 
-		public String ToString()
+		public override String ToString()
 		{
 			return "" + charName + ": " + initNum + "\n";
 		}
