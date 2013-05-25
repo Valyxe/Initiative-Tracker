@@ -15,8 +15,6 @@ namespace Initiative_Tracker
 		private Button addCharBtn;
 		private Button removeCharBtn;
 		private ListView initListView;
-		private ListViewItem initListViewNames;
-		private ListViewItem initListViewNums;
 		private List<InitiativeNode> initList;
 
 		//Initialize the form.
@@ -41,35 +39,42 @@ namespace Initiative_Tracker
 			this.StartPosition = FormStartPosition.CenterScreen;
 
 			//Add text box for character name.
-			charNameTxtBox.Location = new System.Drawing.Point(10, 25);
-			charNameTxtBox.Size = new System.Drawing.Size(100, 20);
+			charNameTxtBox.Location = new System.Drawing.Point(15, 25);
+			charNameTxtBox.Size = new System.Drawing.Size(125, 20);
 			this.Controls.Add(charNameTxtBox);
 			
 			//Add text box for initiative roll.
-			charInitTxtBox.Location = new System.Drawing.Point(120, 25);
+			charInitTxtBox.Location = new System.Drawing.Point(150, 25);
 			charInitTxtBox.Size = new System.Drawing.Size(25, 20);
 			this.Controls.Add(charInitTxtBox);
 
 			//Add button that adds character to list.
 			addCharBtn.BackColor = Color.DarkGray;
-			addCharBtn.Text = "Add Character";
-			addCharBtn.Location = new System.Drawing.Point(155, 25);
-			addCharBtn.Size = new System.Drawing.Size(85, 20);
+			addCharBtn.Text = "Add";
+			addCharBtn.Location = new System.Drawing.Point(185, 25);
+			addCharBtn.Size = new System.Drawing.Size(80, 20);
 			addCharBtn.Click += new EventHandler(addButtonClick);
 			this.Controls.Add(addCharBtn);
 
 			//Add button that removes character from list.
 			removeCharBtn.BackColor = Color.DarkGray;
-			removeCharBtn.Text = "Del Character";
-			removeCharBtn.Location = new System.Drawing.Point(155, 55);
-			removeCharBtn.Size = new System.Drawing.Size(85, 20);
+			removeCharBtn.Text = "Remove";
+			removeCharBtn.Location = new System.Drawing.Point(100, 200);
+			removeCharBtn.Size = new System.Drawing.Size(80, 20);
 			removeCharBtn.Click += new EventHandler(removeButtonClick);
 			this.Controls.Add(removeCharBtn);
 
 			//Add list view that shows character names and initiatives.
+			initListView.View = View.Details;
+			initListView.FullRowSelect = true;
+			initListView.MultiSelect = false;
 			initListView.GridLines = true;
-			initListView.Location = new System.Drawing.Point(10, 85);
-			initListView.Size = new System.Drawing.Size(200, 100);
+			initListView.Columns.Add("", 0);
+			initListView.Columns.Add("Name", 176, HorizontalAlignment.Left);
+			initListView.Columns.Add("Roll", 70, HorizontalAlignment.Center);
+			initListView.AllowColumnReorder = false;
+			initListView.Location = new System.Drawing.Point(15, 65);
+			initListView.Size = new System.Drawing.Size(250, 130);
 			this.Controls.Add(initListView);
 
 			//Give focus to name text box.
@@ -113,23 +118,12 @@ namespace Initiative_Tracker
 
 		private void removeButtonClick(object sender, System.EventArgs e)
 		{
-			if (charNameTxtBox.Text.Trim().Length == 0)
+			if (initListView.SelectedItems.Count > 0)
 			{
-				//Give focus to name text box.
-				charNameTxtBox.Focus();
-				return;
-			}
-			String name = charNameTxtBox.Text;
-			for (int i = 0; i < initList.Count; i++)
-			{
-				if (initList.ElementAt(i).getCharName().Equals(name))
-				{
-					initList.RemoveAt(i);
-					break;
-				}
-			}
+				initList.RemoveAt(initListView.SelectedItems[0].Index);
 
-			repopulateListBox();
+				repopulateListBox();
+			}
 			charNameTxtBox.Text = "";
 			charInitTxtBox.Text = "";
 
@@ -139,12 +133,15 @@ namespace Initiative_Tracker
 
 		private void repopulateListBox()
 		{
+			//Clear the list before repopulation.
 			initListView.Items.Clear();
+
+			//Add items to sublists.
 			Console.Write("------------------\n");
 			for (int i = 0; i < initList.Count; i++)
 			{
-				initListView.Items.Add(""+initList.ElementAt(i).getCharName()+"\t\t:\t"+initList.ElementAt(i).getInit());
-				Console.Write("{0}", initList.ElementAt(i).ToString());
+				initListView.Items.Add(initList.ElementAt(i).getListItem());
+				Console.Write(initList.ElementAt(i).ToString());
 			}
 		}
 	}

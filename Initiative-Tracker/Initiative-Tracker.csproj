@@ -49,18 +49,12 @@
     <Compile Include="InitiativeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InitiativeList.cs" />
     <Compile Include="InitiativeNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="InitiativeForm.resx">
-      <DependentUpon>InitiativeForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

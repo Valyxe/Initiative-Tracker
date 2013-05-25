@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Initiative_Tracker
 {
@@ -26,6 +27,14 @@ namespace Initiative_Tracker
         {
             return initNum;
         }
+
+		public ListViewItem getListItem()
+		{
+			ListViewItem item = new ListViewItem();
+			item.SubItems.Add(charName);
+			item.SubItems.Add(initNum.ToString());
+			return item;
+		}
 
 		public override String ToString()
 		{
