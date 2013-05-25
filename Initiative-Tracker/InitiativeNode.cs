@@ -9,8 +9,8 @@ namespace Initiative_Tracker
 {
     class InitiativeNode : IComparable<InitiativeNode>
     {
-        private String charName;
-        private int initNum;
+		private String charName;
+		private double initNum;
 
         public InitiativeNode(String name, int num)
         {
@@ -18,27 +18,30 @@ namespace Initiative_Tracker
             initNum = num;
         }
 
-        public String getCharName()
-        {
-            return charName;
-        }
+		public String Name
+		{
+			get { return charName; }
+			set { charName = value; }
+		}
 
-        public int getInit()
-        {
-            return initNum;
-        }
+		public double Init
+		{
+			get { return initNum; }
+			set { initNum = value; }
+		}
+
 
 		public ListViewItem getListItem()
 		{
 			ListViewItem item = new ListViewItem();
 			item.SubItems.Add(charName);
-			item.SubItems.Add(initNum.ToString());
+			item.SubItems.Add(initNum.ToString("0.00"));
 			return item;
 		}
 
 		public override String ToString()
 		{
-			return "" + charName + ": " + initNum + "\n";
+			return "" + charName + ": " + initNum;
 		}
 
 		public int CompareTo(InitiativeNode node)
@@ -47,7 +50,7 @@ namespace Initiative_Tracker
 			{
 				return 1;
 			}
-			return -1*initNum.CompareTo(node.getInit());
+			return -1*initNum.CompareTo(node.Init);
 		}
     }
 }

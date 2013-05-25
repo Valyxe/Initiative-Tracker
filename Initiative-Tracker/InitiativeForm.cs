@@ -14,6 +14,7 @@ namespace Initiative_Tracker
 		private TextBox charInitTxtBox;
 		private Button addCharBtn;
 		private Button removeCharBtn;
+		private Button conflictBtn;
 		private ListView initListView;
 		private List<InitiativeNode> initList;
 
@@ -25,6 +26,7 @@ namespace Initiative_Tracker
 			charInitTxtBox = new TextBox();
 			addCharBtn = new Button();
 			removeCharBtn = new Button();
+			conflictBtn = new Button();
 			initListView = new ListView();
 			initList = new List<InitiativeNode>();
 
@@ -64,6 +66,14 @@ namespace Initiative_Tracker
 			removeCharBtn.Click += new EventHandler(removeButtonClick);
 			this.Controls.Add(removeCharBtn);
 
+			//Add button that checks for conflicts and resolves them.
+			conflictBtn.BackColor = Color.DarkGray;
+			conflictBtn.Text = "Resolve conflicts";
+			conflictBtn.Location = new System.Drawing.Point(90, 230);
+			conflictBtn.Size = new System.Drawing.Size(100, 20);
+			conflictBtn.Click += new EventHandler(conflictButtonClick);
+			this.Controls.Add(conflictBtn);
+
 			//Add list view that shows character names and initiatives.
 			initListView.View = View.Details;
 			initListView.FullRowSelect = true;
@@ -94,7 +104,7 @@ namespace Initiative_Tracker
 			InitiativeNode node = new InitiativeNode(name, init);
 			for (int i = 0; i < initList.Count; i++)
 			{
-				if (initList.ElementAt(i).getCharName().Equals(node.getCharName()))
+				if (initList.ElementAt(i).Name.Equals(node.Name))
 				{
 					Console.Write("Error on addButtonClick: Character already exists in list");
 					charNameTxtBox.Text = "";
@@ -126,6 +136,42 @@ namespace Initiative_Tracker
 			}
 			charNameTxtBox.Text = "";
 			charInitTxtBox.Text = "";
+
+			//Give focus to name text box.
+			charNameTxtBox.Focus();
+		}
+
+		private void conflictButtonClick(object sender, System.EventArgs e)
+		{
+			Console.WriteLine("------------");
+			for (int i = 0; i < initList.Count(); i++)
+			{
+				Console.WriteLine("Checking for conflicts: " + i);
+				List<InitiativeNode> conflicts = initList.FindAll(
+					delegate(InitiativeNode node)
+					{
+						if (node.Init == initList.ElementAt(i).Init)
+						{
+							return true;
+						}
+						return false;
+					});
+
+				if (conflicts.Count > 1)
+				{
+					foreach (InitiativeNode n in conflicts)
+					{
+						string reroll = "";
+						InputForm.InputBox("Conflict Resolution", n.Name + "'s re-roll.", ref reroll);
+						Console.WriteLine(initList.ElementAt(initList.IndexOf(n)).ToString());
+						initList.ElementAt(initList.IndexOf(n)).Init = initList.ElementAt(initList.IndexOf(n)).Init + (Convert.ToDouble(reroll)/100);
+						Console.WriteLine(initList.ElementAt(initList.IndexOf(n)).ToString());
+					}
+				}
+
+				initList.Sort();
+				repopulateListBox();
+			}
 
 			//Give focus to name text box.
 			charNameTxtBox.Focus();
