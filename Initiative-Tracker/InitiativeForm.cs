@@ -14,7 +14,6 @@ namespace Initiative_Tracker
 		private TextBox charInitTxtBox;
 		private Button addCharBtn;
 		private Button removeCharBtn;
-		private Button conflictBtn;
 		private ListView initListView;
 		private List<InitiativeNode> initList;
 
@@ -26,7 +25,6 @@ namespace Initiative_Tracker
 			charInitTxtBox = new TextBox();
 			addCharBtn = new Button();
 			removeCharBtn = new Button();
-			conflictBtn = new Button();
 			initListView = new ListView();
 			initList = new List<InitiativeNode>();
 
@@ -37,6 +35,7 @@ namespace Initiative_Tracker
 			this.ForeColor = Color.Black;
 			this.Size = new System.Drawing.Size(300, 300);
 			this.Text = "Initiative Tracker";
+            this.Icon = new System.Drawing.Icon("../../d20.ico");
 			this.FormBorderStyle = FormBorderStyle.Fixed3D;
 			this.StartPosition = FormStartPosition.CenterScreen;
 
@@ -61,18 +60,10 @@ namespace Initiative_Tracker
 			//Add button that removes character from list.
 			removeCharBtn.BackColor = Color.DarkGray;
 			removeCharBtn.Text = "Remove";
-			removeCharBtn.Location = new System.Drawing.Point(100, 200);
+			removeCharBtn.Location = new System.Drawing.Point(100, 215);
 			removeCharBtn.Size = new System.Drawing.Size(80, 20);
 			removeCharBtn.Click += new EventHandler(removeButtonClick);
 			this.Controls.Add(removeCharBtn);
-
-			//Add button that checks for conflicts and resolves them.
-			conflictBtn.BackColor = Color.DarkGray;
-			conflictBtn.Text = "Resolve conflicts";
-			conflictBtn.Location = new System.Drawing.Point(90, 230);
-			conflictBtn.Size = new System.Drawing.Size(100, 20);
-			conflictBtn.Click += new EventHandler(conflictButtonClick);
-			this.Controls.Add(conflictBtn);
 
 			//Add list view that shows character names and initiatives.
 			initListView.View = View.Details;
@@ -100,7 +91,26 @@ namespace Initiative_Tracker
 				return;
 			}
 			String name = charNameTxtBox.Text;
-			int init = Convert.ToInt32(charInitTxtBox.Text);
+            int init = 0;
+            try
+            {
+                init = Convert.ToInt32(charInitTxtBox.Text);
+            }
+            catch (System.FormatException)
+            {
+                string text = "Incorrect input on roll number.";
+                string caption = "Format Error.";
+                MessageBoxButtons button = MessageBoxButtons.OK;
+                MessageBoxIcon icon = MessageBoxIcon.Warning;
+                MessageBox.Show(text, caption, button, icon);
+
+                charNameTxtBox.Text = "";
+                charInitTxtBox.Text = "";
+
+                //Give focus to name text box.
+                charNameTxtBox.Focus();
+                return;
+            }
 			InitiativeNode node = new InitiativeNode(name, init);
 			for (int i = 0; i < initList.Count; i++)
 			{
@@ -122,6 +132,8 @@ namespace Initiative_Tracker
 			charNameTxtBox.Text = "";
 			charInitTxtBox.Text = "";
 
+            checkForConflicts();
+
 			//Give focus to name text box.
 			charNameTxtBox.Focus();
 		}
@@ -141,7 +153,7 @@ namespace Initiative_Tracker
 			charNameTxtBox.Focus();
 		}
 
-		private void conflictButtonClick(object sender, System.EventArgs e)
+		private void checkForConflicts()
 		{
 			Console.WriteLine("------------");
 			for (int i = 0; i < initList.Count(); i++)
@@ -161,20 +173,21 @@ namespace Initiative_Tracker
 				{
 					foreach (InitiativeNode n in conflicts)
 					{
-						string reroll = "";
-						InputForm.InputBox("Conflict Resolution", n.Name + "'s re-roll.", ref reroll);
-						Console.WriteLine(initList.ElementAt(initList.IndexOf(n)).ToString());
-						initList.ElementAt(initList.IndexOf(n)).Init = initList.ElementAt(initList.IndexOf(n)).Init + (Convert.ToDouble(reroll)/100);
-						Console.WriteLine(initList.ElementAt(initList.IndexOf(n)).ToString());
+                        Console.WriteLine(n.Reroll);
+                        if (n.Reroll == 0)
+                        {
+                            string reroll = "";
+                            InputForm.InputBox("Conflict Resolution", n.Name + "'s reroll.", ref reroll);
+                            Console.WriteLine(initList.ElementAt(initList.IndexOf(n)).ToString());
+                            initList.ElementAt(initList.IndexOf(n)).Reroll = Convert.ToInt32(reroll);
+                            Console.WriteLine(initList.ElementAt(initList.IndexOf(n)).ToString());
+                        }
 					}
 				}
 
 				initList.Sort();
 				repopulateListBox();
 			}
-
-			//Give focus to name text box.
-			charNameTxtBox.Focus();
 		}
 
 		private void repopulateListBox()
